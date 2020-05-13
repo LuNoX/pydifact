@@ -30,8 +30,8 @@ from pydifact.control import Characters
 import codecs
 
 
-class SegmentCollection:
-    """Represent a collection of EDI Segments for both reading and writing."""
+class Message:
+    """Represent an EDI message for both reading and writing."""
 
     def __init__(self):
 
@@ -43,41 +43,39 @@ class SegmentCollection:
         self.has_una_segment = False
 
     @classmethod
-    def from_file(cls, file: str, encoding: str = "iso8859-1") -> "SegmentCollection":
+    def from_file(cls, file: str, encoding: str = "iso8859-1") -> "Message":
         """Create a Message instance from a file.
 
         Raises FileNotFoundError if filename is not found.
         :param encoding: an optional string which specifies the encoding. Default is "iso8859-1".
         :param file: The full path to a file that contains an EDI message.
-        :rtype: SegmentCollection
+        :rtype: Message
         """
 
         # codecs.lookup raises an LookupError if given codec was not found:
         codecs.lookup(encoding)
 
         with open(file, encoding=encoding) as f:
-            collection = f.read()
-        return cls.from_str(collection)
+            message = f.read()
+        return cls.from_str(message)
 
     @classmethod
-    def from_str(cls, string: str) -> "SegmentCollection":
+    def from_str(cls, string: str) -> "Message":
         """Create a Message instance from a string.
-        :param string: The EDI content
-        :rtype: SegmentCollection
+        :param string: The EDI message content
+        :rtype: Message
         """
         segments = Parser().parse(string)
 
         return cls.from_segments(segments)
 
     @classmethod
-    def from_segments(
-        cls, segments: list or collections.Iterable
-    ) -> "SegmentCollection":
+    def from_segments(cls, segments: list or collections.Iterable) -> "Message":
         """Create a new Message instance from a iterable list of segments.
 
-        :param segments: The segments of the EDI interchange
+        :param segments: The segments of the message
         :type segments: list/iterable of Segment
-        :rtype: SegmentCollection
+        :rtype: Message
         """
 
         # create a new instance of Message and return it
@@ -106,8 +104,8 @@ class SegmentCollection:
 
     def add_segments(
         self, segments: List[Segment] or collections.Iterable
-    ) -> "SegmentCollection":
-        """Add multiple segments to the collection.
+    ) -> "Message":
+        """Add multiple segments to the message.
 
         :param segments: The segments to add
         :type segments: list or iterable of Segments
@@ -117,8 +115,8 @@ class SegmentCollection:
 
         return self
 
-    def add_segment(self, segment: Segment) -> "SegmentCollection":
-        """Append a segment to the collection.
+    def add_segment(self, segment: Segment) -> "Message":
+        """Append a segment to the message.
 
         :param segment: The segment to add
         """

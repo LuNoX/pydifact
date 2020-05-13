@@ -3,7 +3,7 @@ API
 
 Message
 -------
-.. automodule:: pydifact.segmentscollection
+.. automodule:: pydifact.message
     :members:
 
 Parser

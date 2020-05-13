@@ -15,57 +15,53 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import pytest
 
-from pydifact.segmentcollection import SegmentCollection
+from pydifact.message import Message
 from pydifact.segments import Segment
 
 
 def test_from_file():
     with pytest.raises(FileNotFoundError):
-        SegmentCollection.from_file("/no/such/file")
+        Message.from_file("/no/such/file")
 
 
 def test_create_with_segments():
-    collection = SegmentCollection.from_segments([Segment("36CF")])
-    assert [Segment("36CF")] == collection.segments
+    message = Message.from_segments([Segment("36CF")])
+    assert [Segment("36CF")] == message.segments
 
 
 def test_get_segments():
-    collection = SegmentCollection.from_segments(
+    message = Message.from_segments(
         [Segment("36CF", 1), Segment("CPD"), Segment("36CF", 2)]
     )
-    segments = list(collection.get_segments("36CF"))
+    segments = list(message.get_segments("36CF"))
     assert [Segment("36CF", 1), Segment("36CF", 2)] == segments
 
 
 def test_get_segments_doesnt_exist():
-    collection = SegmentCollection()
-    segments = list(collection.get_segments("36CF"))
+    message = Message()
+    segments = list(message.get_segments("36CF"))
     assert [] == segments
 
 
 def test_get_segment():
-    collection = SegmentCollection.from_segments(
-        [Segment("36CF", 1), Segment("36CF", 2)]
-    )
-    segment = collection.get_segment("36CF")
+    message = Message.from_segments([Segment("36CF", 1), Segment("36CF", 2)])
+    segment = message.get_segment("36CF")
     assert Segment("36CF", 1) == segment
 
 
 def test_str_serialize():
-    collection = SegmentCollection.from_segments(
-        [Segment("36CF", "1"), Segment("36CF", "2")]
-    )
-    string = str(collection)
+    message = Message.from_segments([Segment("36CF", "1"), Segment("36CF", "2")])
+    string = str(message)
     assert "36CF+1'36CF+2'" == string
 
 
 def test_get_segment_doesnt_exist():
-    collection = SegmentCollection()
-    segment = collection.get_segment("36CF")
+    message = Message()
+    segment = message.get_segment("36CF")
     assert segment is None
 
 
 def test_empty_segment():
-    m = SegmentCollection()
+    m = Message()
     with pytest.raises(ValueError):
         m.add_segment(Segment("", []))

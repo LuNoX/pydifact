@@ -16,7 +16,7 @@
 import copy
 import pytest
 
-from pydifact.segmentcollection import SegmentCollection
+from pydifact.message import Message
 from pydifact.segments import Segment
 from pydifact.serializer import Serializer
 
@@ -29,26 +29,26 @@ def serializer():
 def assert_segments(serializer, expected: str, segments: list):
     """Helper function add default UNA header and terminator, and compare string to segment"""
     expected = "UNA:+,? '" + expected + "'"
-    collection = serializer.serialize(segments, with_una_header=True)
-    assert expected == collection
+    message = serializer.serialize(segments, with_una_header=True)
+    assert expected == message
 
 
 def test_una_integrity1():
-    m = SegmentCollection()
+    m = Message()
     initstring = ":+,? '"
     m.add_segment(Segment("UNA", initstring))
     assert m.serialize() == "UNA" + initstring
 
 
 def test_UNA_integrity2():
-    m = SegmentCollection()
+    m = Message()
     initstring = ":+.? '"
     m.add_segment(Segment("UNA", initstring))
     assert m.serialize() == "UNA" + initstring
 
 
 def test_empty_segment_list():
-    m = SegmentCollection()
+    m = Message()
     assert m.serialize() == ""
 
 
